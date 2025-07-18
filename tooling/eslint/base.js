@@ -79,7 +79,7 @@ export default tseslint.config(
         "error",
         {
           name: "zod",
-          message: "Use `import { z } from 'zod/v4'` instead to ensure v4.",
+          message: "Use `import { z } from 'zod'` instead to ensure v4.",
         },
       ],
     },

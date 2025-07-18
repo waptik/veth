@@ -67,7 +67,9 @@
     }
   },
   "globalEnv": [
-    "PORT"
+    "PORT",
+    "EXPO_PUBLIC_API_URL",
+    "VITE_PUBLIC_API_URL"
   ],
   "globalPassThroughEnv": [
     "NODE_ENV",

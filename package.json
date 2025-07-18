@@ -13,6 +13,10 @@
     "clean:workspaces": "turbo run clean",
     "dev": "turbo run dev",
     "dev-watch": "turbo watch dev --continue",
+    "w-api": "pnpm --filter=@repo/api",
+    "w-expo": "pnpm --filter=@repo/app",
+    "w-hono": "pnpm --filter=@repo/hono",
+    "w-vite": "pnpm --filter=@repo/vite",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
