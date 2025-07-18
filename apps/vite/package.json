@@ -1,0 +1,31 @@
+{
+  "name": "@repo/vite",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm with-env vite --clearScreen false",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint \"src/**/*.ts\"",
+    "with-env": "dotenv -e ../../.env --"
+  },
+  "dependencies": {
+    "@repo/api": "workspace:*",
+    "@repo/ui": "workspace:*",
+    "@tanstack/react-query": "catalog:",
+    "@trpc/client": "catalog:",
+    "@trpc/tanstack-react-query": "catalog:",
+    "superjson": "catalog:"
+  },
+  "devDependencies": {
+    "@repo/eslint": "workspace:*",
+    "@repo/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "dotenv-cli": "^8.0.0",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

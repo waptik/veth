@@ -1,0 +1,59 @@
+{
+  "name": "@repo/shared",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./zod": {
+      "types": "./dist/zod.d.ts",
+      "default": "./src/zod.ts"
+    },
+    "./errors": {
+      "types": "./dist/errors/index.d.ts",
+      "default": "./src/errors/index.ts"
+    },
+    "./universal": {
+      "types": "./dist/universal/index.d.ts",
+      "default": "./src/universal/index.ts"
+    },
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "default": "./src/utils/index.ts"
+    },
+    "./utils/logger": {
+      "types": "./dist/utils/logger.d.ts",
+      "default": "./src/utils/logger.ts"
+    }
+  },
+  "dependencies": {
+    "pino": "^9.7.0",
+    "pino-pretty": "^13.0.0",
+    "ts-pattern": "^5.7.1",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@repo/eslint": "workspace:*",
+    "@repo/prettier": "workspace:*",
+    "@repo/tsconfig": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "hono": "catalog:"
+  },
+  "prettier": "@repo/prettier"
+}
