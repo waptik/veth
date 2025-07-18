@@ -1,20 +1,26 @@
 {
   "private": true,
+  "name": "repo",
+  "version": "0.0.0",
+  "engines": {
+    "node": ">=22.14.0",
+    "pnpm": ">=9.6.0"
+  },
+  "packageManager": "pnpm@10.13.1",
   "scripts": {
     "build": "turbo run build",
+    "clean": "git clean -xdf node_modules",
+    "clean:workspaces": "turbo run clean",
     "dev": "turbo run dev",
+    "dev-watch": "turbo watch dev --continue",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
-    "eslint": "^8.57.0",
-    "prettier": "^3.2.5",
-    "turbo": "^2.5.5"
+    "@repo/prettier": "workspace:*",
+    "prettier": "catalog:",
+    "turbo": "^2.5.5",
+    "typescript": "catalog:"
   },
-  "name": "with-vite",
-  "packageManager": "bun@1.2.15",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+  "prettier": "@repo/prettier"
 }
