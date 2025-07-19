@@ -1,8 +1,8 @@
-import * as log from "@std/log";
+import * as logger from "@std/log";
 
-log.setup({
+logger.setup({
   handlers: {
-    default: new log.ConsoleHandler("DEBUG", {
+    default: new logger.ConsoleHandler("DEBUG", {
       formatter: ({ datetime, levelName, msg, args }) => {
         let line = `${datetime.toUTCString()} | ${levelName} | ${msg}`;
 
@@ -23,4 +23,4 @@ log.setup({
   },
 });
 
-export { log };
+export { logger };

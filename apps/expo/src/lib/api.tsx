@@ -48,11 +48,11 @@ export const TRPCReactProvider: React.FC<{ children: React.ReactNode }> = ({
             __DEV__ || (op.direction === "down" && op.result instanceof Error),
         }),
         httpBatchLink({
-          url: `${getBaseUrl()}/api/trpc`,
+          url: `${getBaseUrl()}/trpc`,
           transformer: superjson,
         }),
       ],
-    }),
+    })
   );
 
   return (

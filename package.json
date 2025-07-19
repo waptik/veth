@@ -9,7 +9,7 @@
   "packageManager": "pnpm@10.13.1",
   "scripts": {
     "build": "turbo run build",
-    "clean": "git clean -xdf node_modules",
+    "clean": "git clean -xdf node_modules package-lock.json pnpm-lock.yaml",
     "clean:workspaces": "turbo run clean",
     "dev": "turbo run dev",
     "dev-watch": "turbo watch dev --continue",

@@ -1,3 +1,16 @@
 {
-  "extends": "@repo/tsconfig/workers.json"
+  "extends": "@repo/tsconfig/base.json",
+  "compilerOptions": {
+    "strict": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "hono/jsx"
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.json"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

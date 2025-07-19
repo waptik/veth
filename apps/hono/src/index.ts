@@ -1,15 +1,54 @@
+// Cloudflare Workers type
+import type { Context } from "hono";
 import { swaggerUI } from "@hono/swagger-ui";
 import { trpcServer } from "@hono/trpc-server";
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import { logger as honoLogger } from "hono/logger";
+import { poweredBy } from "hono/powered-by";
+import { requestId } from "hono/request-id";
+import { timing } from "hono/timing";
 
 import { createTRPCContext } from "@repo/api";
 import { appRouter } from "@repo/api/router";
+import { appContext, HonoEnv } from "@repo/shared";
+import { logger as mainLogger } from "@repo/shared/utils";
 
-import { openApiTrpcServerHandler } from "./hono-trpc-open-api.ts";
-import { openApiDocument } from "./openapi.ts";
-import { HttpApplication } from "./server.ts";
+import { openApiTrpcServerHandler } from "./hono-trpc-open-api";
+import { openApiDocument } from "./openapi";
 
-const httpApp = new HttpApplication();
-const app = httpApp.build();
+const app = new Hono<HonoEnv>();
+
+app.use("*", honoLogger(), poweredBy(), timing());
+app.use(
+  "*",
+  cors({
+    origin: (origin) => origin,
+    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    exposeHeaders: ["Content-Length"],
+    maxAge: 600,
+    credentials: true,
+  }),
+);
+app.use(appContext);
+app.use("*", requestId());
+
+// Middleware to set up request metadata and logger
+// This middleware runs for every request and sets up the logger with request-specific metadata
+app.use(async (c, next) => {
+  const metadata = c.get("context").requestMetadata;
+
+  const honoLogger = mainLogger.child({
+    requestId: c.var.requestId,
+    ipAddress: metadata.ipAddress,
+    userAgent: metadata.userAgent,
+  });
+
+  c.set("logger", honoLogger);
+
+  await next();
+});
 
 /**
  * Mount tRPC handler
@@ -17,11 +56,11 @@ const app = httpApp.build();
  */
 app
   .all(
-    "/api/trpc/*",
+    "/trpc/*",
     trpcServer({
       router: appRouter,
-      endpoint: "/api/trpc",
-      createContext: ({ info }, c) =>
+      endpoint: "/trpc",
+      createContext: ({ info }, c: Context<HonoEnv>) =>
         createTRPCContext({ c, requestSource: "app", info }),
       batching: { enabled: true },
       onError({ error, path }) {
@@ -29,9 +68,9 @@ app
       },
     }),
   )
-  .get("/", (c) => c.text("Hello Hono!"))
+  .get("/", (c: Context<HonoEnv>) => c.text("Hello Hono!"))
   // Setup health check endpoint
-  .get("/health", (c) => {
+  .get("/health", (c: Context<HonoEnv>) => {
     // const environment = getEnvironment(c.env);
     return c.json({
       status: "ok",
@@ -42,28 +81,11 @@ app
   });
 
 // endpoints for OpenAPI
-app.get(`/api/openapi.json`, (c) => c.json(openApiDocument));
+app.get(`/api/openapi.json`, (c: Context<HonoEnv>) => c.json(openApiDocument));
+// Use the middleware to serve Swagger UI at /ui
+app.get("/api/ui", swaggerUI({ url: "/api/openapi.json" }));
+// Use the OpenAPI handler for tRPC requests
 app.use(`/api/*`, openApiTrpcServerHandler);
 
-// Use the middleware to serve Swagger UI at /ui
-app.get("/ui", swaggerUI({ url: "/api/openapi.json" }));
-
+// Export for Cloudflare Workers
 export default app;
-// app.get("*", async (c) => {
-//   try {
-//     // First try to serve the exact requested path
-//     const requestUrl = new URL(c.req.url);
-//     let response = await c.env.ASSETS.fetch(requestUrl, c.req.raw);
-
-//     // If not found, fall back to index.html for SPA routing
-//     if (response.status === 404) {
-//       const indexUrl = new URL("/index.html", c.req.url);
-//       response = await c.env.ASSETS.fetch(indexUrl, c.req.raw);
-//     }
-
-//     return response;
-//   } catch (error) {
-//     console.error("Error serving static content:", error);
-//     return c.text("Error serving content", 500);
-//   }
-// });

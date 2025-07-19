@@ -21,3 +21,5 @@ const app = new Hono<{ Bindings: CloudflareBindings }>();
 ```
 
 open http://localhost:8787
+
+[![Live Demo](https://veth-api.waptik.workers.dev)
