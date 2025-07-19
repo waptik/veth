@@ -1,0 +1,38 @@
+{
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "include": [
+        "${configDir}/worker-configuration.d.ts",
+        "${configDir}/env.d.ts",
+        "${configDir}/src/**/*.ts",
+        "${configDir}/src/**/*.tsx"
+    ],
+    "exclude": [
+        "${configDir}/node_modules/",
+        "${configDir}/dist/",
+        "${configDir}/eslint.config.ts"
+    ],
+    "compilerOptions": {
+        "target": "ESNext",
+        "lib": [
+            "ESNext"
+        ],
+        "jsx": "react",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "types": [
+            "./worker-configuration.d.ts",
+            "@cloudflare/vitest-pool-workers"
+        ],
+        "resolveJsonModule": true,
+        "allowJs": true,
+        "checkJs": false,
+        "noEmit": true,
+        "isolatedModules": true,
+        "allowSyntheticDefaultImports": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "moduleDetection": "force"
+    }
+}

@@ -1,22 +1,17 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { poweredBy } from "hono/powered-by";
-import { timing } from "hono/timing";
-import { cors } from "hono/cors";
 import { requestId } from "hono/request-id";
-import { type HonoVariables } from "@repo/api/hono";
+import { timing } from "hono/timing";
 
 import { appContext, HonoEnv } from "@repo/shared";
 import { logger as mainLogger } from "@repo/shared/utils";
 
-import { log } from "./core/log.ts";
-
-type Variables = HonoVariables;
-
 export class HttpApplication {
   private readonly app: Hono<HonoEnv>;
   private controller: AbortController = new AbortController();
-  protected internalHttpServer?: Deno.HttpServer;
+  // protected internalHttpServer?: Deno.HttpServer;
   constructor() {
     this.app = new Hono<HonoEnv>();
     this.mountRoutes();
@@ -73,49 +68,33 @@ export class HttpApplication {
    * const { port } = app.listen(3000);
    * ```
    */
-  public listen(port: number = 8000): Promise<{ port: number }> {
-    this.controller = new AbortController();
-    const { signal } = this.controller;
-    const listen = new Promise<{ port: number }>((resolve) => {
-      this.internalHttpServer = Deno.serve({
-        signal,
-        port,
-        onListen: (listen) => {
-          const hostname = listen.hostname === "0.0.0.0"
-            ? "localhost"
-            : listen.hostname;
-          log.info(`Listening on http://${hostname}:${listen.port}`);
-          resolve({ ...listen });
-        },
-      }, this.app.fetch);
-    });
-    return listen;
-  }
+  // public listen(port: number = 8000): Promise<{ port: number }> {
+  //   this.controller = new AbortController();
+  //   const { signal } = this.controller;
+  //   const listen = new Promise<{ port: number }>((resolve) => {
+  //     this.internalHttpServer = Deno.serve({
+  //       signal,
+  //       port,
+  //       onListen: (listen) => {
+  //         const hostname = listen.hostname === "0.0.0.0"
+  //           ? "localhost"
+  //           : listen.hostname;
+  //         log.info(`Listening on http://${hostname}:${listen.port}`);
+  //         resolve({ ...listen });
+  //       },
+  //     }, this.app.fetch);
+  //   });
+  //   return listen;
+  // }
 
   /**
-   * Adds REST endpoints to the application.
+   * Builds the Hono application instance.
    *
-   * @param {Function} setupFunc - A function that takes a Hono instance and returns a Hono instance.
-   * @returns {HttpApplication} The current HttpApplication instance.
+   * @returns {Hono<HonoEnv>} The Hono application instance.
    *
-   * @example
-   * ```typescript
-   * const app = new HttpApplication();
-   * app.addRestEndpoints((app) => {
-   *   app.get("/", (c) => c.text("Hello World!"));
-   *   return app;
-   * });
-   * ```
+   * @remarks
+   * This method finalizes the application setup and returns the configured Hono instance.
    */
-  public addRestEndpoints(
-    setupFunc: (
-      app: Hono<HonoEnv>,
-    ) => Hono<HonoEnv>,
-  ): HttpApplication {
-    this.app.route("/api", setupFunc(this.app));
-    return this;
-  }
-
   public build() {
     return this.app;
   }
