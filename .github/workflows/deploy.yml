@@ -1,9 +1,7 @@
 name: Deploy
 on:
   push:
-    branches: main
-  pull_request:
-    branches: main
+    branches: deno-deploy
 
 jobs:
   deploy:
@@ -37,5 +35,3 @@ jobs:
           project: "thevirginbr-veth-76"
           entrypoint: "apps/hono/src/index.ts"
           root: ""
-          
-          

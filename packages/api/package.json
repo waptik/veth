@@ -8,10 +8,6 @@
       "types": "./dist/index.d.ts",
       "default": "./src/index.ts"
     },
-    "./hono": {
-      "types": "./dist/lib/hono.d.ts",
-      "default": "./src/lib/hono.ts"
-    },
     "./utils": {
       "types": "./dist/lib/index.d.ts",
       "default": "./src/lib/index.ts"

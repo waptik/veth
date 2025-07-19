@@ -1,8 +1,9 @@
-import type { AppRouter } from "@repo/api/router";
 import { QueryCache, QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink, loggerLink } from "@trpc/client";
 import { createTRPCContext } from "@trpc/tanstack-react-query";
 import superjson from "superjson";
+
+import type { AppRouter } from "@repo/api/router";
 
 function makeQueryClient() {
   return new QueryClient({
@@ -37,7 +38,7 @@ export function getQueryClient() {
   }
 }
 
-const apiUrl = import.meta.env.VITE_PUBLIC_TRPC_API + "/api/trpc";
+const apiUrl = import.meta.env.VITE_PUBLIC_TRPC_API + "/trpc";
 console.log("apiUrl", apiUrl);
 console.log("meta", import.meta.env);
 
@@ -57,6 +58,5 @@ export const createTrpcClient = () =>
   });
 
 // Create and export the TRPC context with type assertion
-export const { TRPCProvider, useTRPC, useTRPCClient } = createTRPCContext<
-  AppRouter
->();
+export const { TRPCProvider, useTRPC, useTRPCClient } =
+  createTRPCContext<AppRouter>();

@@ -8,7 +8,7 @@ submit a pull request with a fix. GitHub Issues will be closed.
 Run the following command:
 
 ```sh
-npx create-turbo@latest -e with-vite
+npx create-turbo@latest -e with-vite-react
 ```
 
 ## What's inside?
@@ -17,11 +17,14 @@ This Turborepo includes the following packages and apps:
 
 ### Apps and Packages
 
-- `docs`: a vanilla [vite](https://vitejs.dev) ts app
-- `web`: another vanilla [vite](https://vitejs.dev) ts app
-- `@repo/ui`: a stub component & utility library shared by both `web` and `docs`
-  applications
+- `@repo/docs`: a react [vite](https://vitejs.dev) ts app, see [demo](https://veth-docs.vercel.app/)
+- `@repo/vite`: another react [vite](https://vitejs.dev) ts app, see [demo](https://veth-site.vercel.app/)
+- `@repo/hono`: a [Hono](https://hono.dev) app for Cloudflare Workers, see [demo](https://veth-api.waptik.workers.dev/)
+- `@repo/expo`: a React Native app using [Expo](https://expo.dev/)
+- `@repo/shared`: a shared package for utilities and types
+- `@repo/api`: a package containing tRPC utilities and types
 - `@repo/eslint`: shared `eslint` configurations
+- `@repo/prettier`: shared `prettier` configurations
 - `@repo/tsconfig`: `tsconfig.json`s used throughout the monorepo
 
 Each package and app is 100% [TypeScript](https://www.typescriptlang.org/).

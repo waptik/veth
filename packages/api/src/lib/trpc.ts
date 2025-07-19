@@ -7,48 +7,46 @@
  * The pieces you will need to use are documented accordingly near the end
  */
 import { initTRPC } from "@trpc/server";
+import { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
 import { Context } from "hono";
 import superjson from "superjson";
-import { OpenApiMeta } from "trpc-to-openapi";
+import { AnyZodObject } from "zod/v3";
 import { z, ZodError } from "zod/v4";
 
 import { HonoEnv } from "@repo/shared";
-
-import { TRPCContext } from "./context";
 import { ApiRequestMetadata } from "@repo/shared/universal";
 import { logger } from "@repo/shared/utils";
-import { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
-import { AnyZodObject } from "zod/v3";
+
+import { TRPCContext } from "./context";
 
 type CreateTrpcContextOptions = {
-    info: CreateHTTPContextOptions["info"];
-    c: Context<HonoEnv>;
-    requestSource: "app" | "expo" | "openapi";
+  info: CreateHTTPContextOptions["info"];
+  c: Context<HonoEnv>;
+  requestSource: "app" | "expo" | "openapi";
 };
 
 // Can't import type from trpc-to-openapi because it breaks build, not sure why.
 export type TrpcRouteMeta = {
-    openapi?: {
-        enabled?: boolean;
-        method: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
-        path: `/${string}`;
-        summary?: string;
-        description?: string;
-        protect?: boolean;
-        tags?: string[];
-        // eslint-disable-next-line @typescript-eslint/ban-types
-        contentTypes?:
-            (
-                | "application/json"
-                | "application/x-www-form-urlencoded"
-                | (string & {})
-            )[];
-        deprecated?: boolean;
-        requestHeaders?: AnyZodObject;
-        responseHeaders?: AnyZodObject;
-        successDescription?: string;
-        errorResponses?: number[] | Record<number, string>;
-    };
+  openapi?: {
+    enabled?: boolean;
+    method: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
+    path: `/${string}`;
+    summary?: string;
+    description?: string;
+    protect?: boolean;
+    tags?: string[];
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    contentTypes?: (
+      | "application/json"
+      | "application/x-www-form-urlencoded"
+      | (string & {})
+    )[];
+    deprecated?: boolean;
+    requestHeaders?: AnyZodObject;
+    responseHeaders?: AnyZodObject;
+    successDescription?: string;
+    errorResponses?: number[] | Record<number, string>;
+  };
 } & Record<string, unknown>;
 
 /**
@@ -65,32 +63,32 @@ export type TrpcRouteMeta = {
  */
 
 export const createTRPCContext = async ({
-    c,
-    info,
-    requestSource,
+  c,
+  info,
+  requestSource,
 }: CreateTrpcContextOptions) => {
-    const req = c.req.raw;
+  const req = c.req.raw;
 
-    const requestMetadata = c.get("context").requestMetadata;
+  const requestMetadata = c.get("context").requestMetadata;
 
-    const metadata: ApiRequestMetadata = {
-        requestMetadata,
-        source: requestSource,
-        auth: null,
-    };
+  const metadata: ApiRequestMetadata = {
+    requestMetadata,
+    source: requestSource,
+    auth: null,
+  };
 
-    const trpcLogger = logger.child({
-        ipAddress: requestMetadata.ipAddress,
-        userAgent: requestMetadata.userAgent,
-        requestId: crypto.randomUUID(),
-    });
-    return {
-        headers: c.req.header(),
-        logger: trpcLogger,
-        req,
-        metadata,
-        info,
-    };
+  const trpcLogger = logger.child({
+    ipAddress: requestMetadata.ipAddress,
+    userAgent: requestMetadata.userAgent,
+    requestId: crypto.randomUUID(),
+  });
+  return {
+    headers: c.req.header(),
+    logger: trpcLogger,
+    req,
+    metadata,
+    info,
+  };
 };
 /**
  * 2. INITIALIZATION
@@ -98,20 +96,22 @@ export const createTRPCContext = async ({
  * This is where the trpc api is initialized, connecting the context and
  * transformer
  */
-const t = initTRPC.meta<TrpcRouteMeta>().context<TRPCContext>().create({
+const t = initTRPC
+  .meta<TrpcRouteMeta>()
+  .context<TRPCContext>()
+  .create({
     transformer: superjson,
     errorFormatter: ({ shape, error }) => ({
-        ...shape,
-        data: {
-            ...shape.data,
-            zodError: error.cause instanceof ZodError
-                ? z.flattenError(
-                    error.cause as ZodError<Record<string, unknown>>,
-                )
-                : null,
-        },
+      ...shape,
+      data: {
+        ...shape.data,
+        zodError:
+          error.cause instanceof ZodError
+            ? z.flattenError(error.cause as ZodError<Record<string, unknown>>)
+            : null,
+      },
     }),
-});
+  });
 
 /**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
@@ -133,20 +133,20 @@ export const createTRPCRouter = t.router;
  * network latency that would occur in production but not in local development.
  */
 const timingMiddleware = t.middleware(async ({ next, path }) => {
-    const start = Date.now();
+  const start = Date.now();
 
-    if (t._config.isDev) {
-        // artificial delay in dev 100-500ms
-        const waitMs = Math.floor(Math.random() * 400) + 100;
-        await new Promise((resolve) => setTimeout(resolve, waitMs));
-    }
+  if (t._config.isDev) {
+    // artificial delay in dev 100-500ms
+    const waitMs = Math.floor(Math.random() * 400) + 100;
+    await new Promise((resolve) => setTimeout(resolve, waitMs));
+  }
 
-    const result = await next();
+  const result = await next();
 
-    const end = Date.now();
-    console.log(`[TRPC] ${path} took ${end - start}ms to execute`);
+  const end = Date.now();
+  console.log(`[TRPC] ${path} took ${end - start}ms to execute`);
 
-    return result;
+  return result;
 });
 
 /**
@@ -167,15 +167,13 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure
-    .use(timingMiddleware)
-    .use(({ ctx, next }) => {
-        // if (!ctx.session?.user) {
-        //   throw new TRPCError({ code: "UNAUTHORIZED" });
-        // }
-        return next({
-            ctx: {
-                // infers the `session` as non-nullable
-                // session: { ...ctx.session, user: ctx.session.user },
-            },
-        });
+  .use(timingMiddleware)
+  .use(({ ctx, next }) => {
+    return next({
+      ctx: {
+        ...ctx,
+        // infers the `session` as non-nullable
+        // session: { ...ctx.session, user: ctx.session.user },
+      },
     });
+  });
