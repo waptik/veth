@@ -1,3 +1,4 @@
+#!/usr/bin/env deno run --allow-net --allow-read --unstable-kv --unstable-cron --env --version v2.4.2 --include-files package.json deno.json
 import { swaggerUI } from "@hono/swagger-ui";
 import { trpcServer } from "@hono/trpc-server";
 
@@ -8,7 +9,8 @@ import { openApiTrpcServerHandler } from "./hono-trpc-open-api.ts";
 import { openApiDocument } from "./openapi.ts";
 import { HttpApplication } from "./server.ts";
 
-async function main() {
+// Vercel expects a handler function
+export default async function handler() {
   const httpApp = new HttpApplication();
   httpApp.addRestEndpoints((app) => {
     /**
@@ -53,7 +55,7 @@ async function main() {
   await httpApp.listen();
 }
 
-main().catch((error) => {
+handler().catch((error) => {
   console.error("Error starting the application:", error);
   Deno.exit(1);
 });

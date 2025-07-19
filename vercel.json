@@ -1,0 +1,8 @@
+{
+    "cleanUrls": true,
+    "functions": {
+        "apps/hono/**/*.[jt]s": {
+            "runtime": "vercel-deno@3.1.1"
+        }
+    }
+}
