@@ -1,17 +1,14 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { poweredBy } from "hono/powered-by";
-import { timing } from "hono/timing";
-import { cors } from "hono/cors";
 import { requestId } from "hono/request-id";
-import { type HonoVariables } from "@repo/api/hono";
+import { timing } from "hono/timing";
 
 import { appContext, HonoEnv } from "@repo/shared";
 import { logger as mainLogger } from "@repo/shared/utils";
 
 import { log } from "./core/log.ts";
-
-type Variables = HonoVariables;
 
 export class HttpApplication {
   private readonly app: Hono<HonoEnv>;
@@ -77,17 +74,19 @@ export class HttpApplication {
     this.controller = new AbortController();
     const { signal } = this.controller;
     const listen = new Promise<{ port: number }>((resolve) => {
-      this.internalHttpServer = Deno.serve({
-        signal,
-        port,
-        onListen: (listen) => {
-          const hostname = listen.hostname === "0.0.0.0"
-            ? "localhost"
-            : listen.hostname;
-          log.info(`Listening on http://${hostname}:${listen.port}`);
-          resolve({ ...listen });
+      this.internalHttpServer = Deno.serve(
+        {
+          signal,
+          port,
+          onListen: (listen) => {
+            const hostname =
+              listen.hostname === "0.0.0.0" ? "localhost" : listen.hostname;
+            log.info(`Listening on http://${hostname}:${listen.port}`);
+            resolve({ ...listen });
+          },
         },
-      }, this.app.fetch);
+        this.app.fetch,
+      );
     });
     return listen;
   }
@@ -108,9 +107,7 @@ export class HttpApplication {
    * ```
    */
   public addRestEndpoints(
-    setupFunc: (
-      app: Hono<HonoEnv>,
-    ) => Hono<HonoEnv>,
+    setupFunc: (app: Hono<HonoEnv>) => Hono<HonoEnv>,
   ): HttpApplication {
     this.app.route("/api", setupFunc(this.app));
     return this;
