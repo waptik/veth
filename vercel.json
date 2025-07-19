@@ -4,5 +4,11 @@
         "apps/hono/**/*.[jt]s": {
             "runtime": "vercel-deno@3.1.1"
         }
-    }
+    },
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "/apps/hono/$1"
+        }
+    ]
 }
