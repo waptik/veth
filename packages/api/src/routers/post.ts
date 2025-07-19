@@ -61,7 +61,11 @@ export const postRouter = createTRPCRouter({
     .input(z.object({ id: z.string() }))
     .output(z.boolean())
     .mutation(({ input }) => {
-      const isDeleted = posts.find((post) => post.id !== input.id);
-      return !!isDeleted;
+      const index = posts.findIndex((post) => post.id === input.id);
+      if (index !== -1) {
+        posts.splice(index, 1);
+        return true;
+      }
+      return false;
     }),
 });
