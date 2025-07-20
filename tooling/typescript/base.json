@@ -1,11 +1,14 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Default",
   "compilerOptions": {
     "composite": false,
-    "declaration": false,
-    "declarationMap": false,
+    "declaration": true,
+    "declarationMap": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "emitDeclarationOnly": true,
+    "incremental": true,
     "inlineSources": false,
     "isolatedModules": true,
     "module": "ESNext",
@@ -13,10 +16,18 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "preserveWatchOutput": true,
+    "noImplicitAny": true,
+    "resolveJsonModule": true,
     "skipLibCheck": true,
-    "strict": true
+    "strict": true,
+    "tsBuildInfoFile": "${configDir}/.cache/tsbuildinfo.json",
+    "outDir": "${configDir}/dist"
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "build",
+    "dist",
+    ".next",
+    ".expo"
   ]
 }

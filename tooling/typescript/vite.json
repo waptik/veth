@@ -1,5 +1,7 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "./base.json",
+  "display": "Vite React",
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
