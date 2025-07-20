@@ -1,30 +1,34 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true,
     "baseUrl": ".",
     "jsx": "react-native",
-    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json",
     "checkJs": false,
     "paths": {
       "@/*": [
         "./src/*"
-      ],
-      "@/assets*": [
-        "./assets/*"
       ]
-    }
+    },
+    "moduleSuffixes": [
+      ".ios",
+      ".android",
+      ".native",
+      ""
+    ],
+    "types": [
+      "nativewind/types"
+    ]
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.js",
+    "src",
+    "*.ts",
+    "*.js",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "nativewind-env.d.ts"
   ],
   "exclude": [
-    "node_modules",
-    "metro.config.js"
+    "node_modules"
+    /* Commented out: "metro.config.js" */
   ]
 }

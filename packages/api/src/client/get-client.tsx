@@ -56,5 +56,6 @@ export const createTrpcClient = () =>
   });
 
 // Create and export the TRPC context with type assertion
-export const { TRPCProvider, useTRPC, useTRPCClient } =
-  createTRPCContext<AppRouter>();
+export const { TRPCProvider, useTRPC, useTRPCClient } = createTRPCContext<
+  AppRouter
+>();

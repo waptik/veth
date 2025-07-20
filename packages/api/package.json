@@ -27,6 +27,8 @@
   },
   "dependencies": {
     "@repo/shared": "workspace:*",
+    "@tanstack/react-query": "catalog:",
+    "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
     "superjson": "catalog:",
     "zod": "catalog:"

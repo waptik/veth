@@ -32,8 +32,8 @@ export const api = createTRPCContext<AppRouter>();
 export const TRPCReactProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const url = `${getBaseUrl()}/trpc`;
-  console.log("[TRPC.makeQueryClient] Using TRPC URL: ", url);
+  const apiUrl = `${getBaseUrl()}/trpc`;
+  console.log("[TRPC.makeQueryClient] Using TRPC URL: ", apiUrl);
 
   const [queryClient] = useState(() =>
     new QueryClient({
@@ -84,7 +84,7 @@ export const TRPCReactProvider: React.FC<{ children: React.ReactNode }> = ({
           colorMode: "ansi",
         }),
         httpBatchLink({
-          url,
+          url: apiUrl,
           transformer: superjson,
           headers() {
             const headers = new Map<string, string>();
@@ -106,5 +106,4 @@ export const TRPCReactProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-// eslint-disable-next-line import/no-unresolved
 export { type RouterInputs, type RouterOutputs } from "@repo/api";

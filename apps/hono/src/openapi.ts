@@ -7,6 +7,6 @@ import { appRouter } from "@repo/api/router";
 export const openApiDocument = generateOpenApiDocument(appRouter, {
   title: "tRPC OpenAPI",
   version: "0.0.0",
-  baseUrl: "http://localhost:8000/api",
-  docsUrl: "http://localhost:8000/api/openapi.json",
+  baseUrl: "http://localhost:8787/api",
+  docsUrl: "http://localhost:8787/api/openapi.json",
 });

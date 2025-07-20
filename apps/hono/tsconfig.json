@@ -3,11 +3,15 @@
   "compilerOptions": {
     "strict": true,
     "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx"
+    "jsxImportSource": "hono/jsx",
+    "types": [
+      "./worker-configuration.d.ts",
+    ],
   },
   "include": [
-    "**/*.ts",
-    "**/*.json"
+    "vite.config.ts",
+    "src/**/*.ts",
+    "src/**/*.json"
   ],
   "exclude": [
     "node_modules",

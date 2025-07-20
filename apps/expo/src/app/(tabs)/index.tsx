@@ -7,7 +7,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { Image } from "expo-image";
-import { Platform, StyleSheet } from "react-native";
+import { Button, Platform, StyleSheet } from "react-native";
 
 export default function HomeScreen() {
   const trpc = api.useTRPC();
@@ -64,6 +64,13 @@ export default function HomeScreen() {
           <ThemedText type="defaultSemiBold">app</ThemedText> to{" "}
           <ThemedText type="defaultSemiBold">app-example</ThemedText>.
         </ThemedText>
+        <Button
+          title="Reset Project"
+          onPress={() => {
+            // This is a placeholder for the reset functionality
+            console.log("Resetting project...");
+          }}
+        />
       </ThemedView>
     </ParallaxScrollView>
   );
