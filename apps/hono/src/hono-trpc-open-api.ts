@@ -1,22 +1,23 @@
 import type { Context } from "hono";
 import { createOpenApiFetchHandler } from "trpc-to-openapi";
+
+import type { AppRouter } from "@repo/api";
+import { createTRPCContext } from "@repo/api";
 import { appRouter } from "@repo/api/router";
+import { handleTrpcRouterError } from "@repo/api/utils";
 import {
   AppError,
   genericErrorCodeToTrpcErrorCodeMap,
 } from "@repo/shared/errors";
-import { createTRPCContext } from "@repo/api";
-import { handleTrpcRouterError } from "@repo/api/utils";
 
 export const openApiTrpcServerHandler = (c: Context) => {
-  // @ts-ignore - zod mismatch
-  return createOpenApiFetchHandler<typeof appRouter>({
+  return createOpenApiFetchHandler<AppRouter>({
     endpoint: "/api",
     router: appRouter,
-    createContext: ({ info }) =>
-      createTRPCContext({ c, requestSource: "openapi", info }),
+    createContext: ({ info, resHeaders }) =>
+      createTRPCContext({ c, requestSource: "openapi", info, resHeaders }),
     req: c.req.raw,
-    onError: (opts) => handleTrpcRouterError(opts, "apiV2"),
+    onError: (opts) => handleTrpcRouterError(opts, "api"),
     // Not sure why we need to do this since we handle it in errorFormatter which runs after this.
     responseMeta: (opts) => {
       if (opts.errors[0]?.cause instanceof AppError) {

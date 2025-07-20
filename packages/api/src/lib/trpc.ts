@@ -22,10 +22,12 @@ import { TRPCContext } from "./context";
 type CreateTrpcContextOptions = {
   info: CreateHTTPContextOptions["info"];
   c: Context<HonoEnv>;
-  requestSource: "app" | "expo" | "openapi";
+  requestSource: "app" | "openapi";
+  resHeaders?: Headers;
 };
 
 // Can't import type from trpc-to-openapi because it breaks build, not sure why.
+// https://github.com/documenso/documenso/blob/512e3555b4c8daf4ef51f3cb8f4969a132d5db3b/packages/trpc/server/trpc.ts#L15
 export type TrpcRouteMeta = {
   openapi?: {
     enabled?: boolean;
@@ -66,7 +68,8 @@ export const createTRPCContext = async ({
   c,
   info,
   requestSource,
-}: CreateTrpcContextOptions) => {
+  resHeaders,
+}: CreateTrpcContextOptions): Promise<TRPCContext> => {
   const req = c.req.raw;
 
   const requestMetadata = c.get("context").requestMetadata;
@@ -82,12 +85,15 @@ export const createTRPCContext = async ({
     userAgent: requestMetadata.userAgent,
     requestId: crypto.randomUUID(),
   });
+  const cache = new Map<string | symbol, unknown>();
   return {
-    headers: c.req.header(),
     logger: trpcLogger,
     req,
     metadata,
     info,
+    cache,
+    res: c.res,
+    resHeaders,
   };
 };
 /**

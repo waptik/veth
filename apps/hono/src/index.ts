@@ -11,6 +11,7 @@ import { timing } from "hono/timing";
 
 import { createTRPCContext } from "@repo/api";
 import { appRouter } from "@repo/api/router";
+import { handleTrpcRouterError } from "@repo/api/utils";
 import { appContext, HonoEnv } from "@repo/shared";
 import { logger as mainLogger } from "@repo/shared/utils";
 
@@ -20,17 +21,7 @@ import { openApiDocument } from "./openapi";
 const app = new Hono<HonoEnv>();
 
 app.use("*", honoLogger(), poweredBy(), timing());
-app.use(
-  "*",
-  cors({
-    origin: (origin) => origin,
-    allowHeaders: ["Content-Type", "Authorization"],
-    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    exposeHeaders: ["Content-Length"],
-    maxAge: 600,
-    credentials: true,
-  }),
-);
+app.use("*", cors());
 app.use(appContext);
 app.use("*", requestId());
 
@@ -60,12 +51,10 @@ app
     trpcServer({
       router: appRouter,
       endpoint: "/trpc",
-      createContext: ({ info }, c: Context<HonoEnv>) =>
-        createTRPCContext({ c, requestSource: "app", info }),
+      createContext: ({ info, resHeaders }, c: Context<HonoEnv>) =>
+        createTRPCContext({ c, requestSource: "app", info, resHeaders }),
       batching: { enabled: true },
-      onError({ error, path }) {
-        console.error("tRPC error on path", path, ":", error);
-      },
+      onError: (opts) => handleTrpcRouterError(opts, "trpc"),
     }),
   )
   .get("/", (c: Context<HonoEnv>) => c.text("Hello Hono!"))
