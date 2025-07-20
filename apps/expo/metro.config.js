@@ -1,11 +1,19 @@
 const { getDefaultConfig } = require("expo/metro-config");
 const { FileStore } = require("metro-cache");
+const { withNativeWind } = require("nativewind/metro");
+const {
+  wrapWithReanimatedMetroConfig,
+} = require("react-native-reanimated/metro-config");
 
 const path = require("node:path");
 
-const config = withTurborepoManagedCache(getDefaultConfig(__dirname));
-
-module.exports = config;
+const config = withTurborepoManagedCache(
+  withNativeWind(getDefaultConfig(__dirname), {
+    input: "./src/styles.css",
+    configPath: "./tailwind.config.ts",
+  }),
+);
+module.exports = wrapWithReanimatedMetroConfig(config);
 
 /**
  * Move the Metro cache to the `.cache/metro` folder.
