@@ -1,7 +1,7 @@
 import type { ErrorHandlerOptions } from "@trpc/server/unstable-core-do-not-import";
 
 import { AppError, AppErrorCode } from "@repo/shared/errors";
-import { logger } from "@repo/shared/utils";
+import { createLogger, logger } from "@repo/shared/utils";
 
 import type { TRPCContext } from "./context";
 
@@ -29,10 +29,18 @@ export const handleTrpcRouterError = (
   const isLoggableTrpcError =
     !isAppError && errorCodesToAlertOn.includes(error.code);
 
-  const errorLogger = (ctx?.logger || logger).child({
-    status: "error",
-    appError: AppError.toJSON(appError),
-  });
+  const isExistingLogger = !!(ctx?.logger instanceof logger.Logger);
+  const loggerName = ctx?.logger
+    ? `${ctx.logger.loggerName}.TrpcError`
+    : "TrpcError";
+  const errorLogger = createLogger(
+    loggerName,
+    {
+      status: "error",
+      appError: AppError.toJSON(appError),
+    },
+    isExistingLogger,
+  );
 
   // Only fully log the error on certain conditions since some errors are expected.
   if (isLoggableAppError || isLoggableTrpcError) {

@@ -13,7 +13,7 @@ import { createTRPCContext } from "@repo/api";
 import { appRouter } from "@repo/api/router";
 import { handleTrpcRouterError } from "@repo/api/utils";
 import { appContext, HonoEnv } from "@repo/shared";
-import { logger as mainLogger } from "@repo/shared/utils";
+import { createLogger } from "@repo/shared/utils";
 
 import { openApiTrpcServerHandler } from "./hono-trpc-open-api";
 import { openApiDocument } from "./openapi";
@@ -30,7 +30,7 @@ app.use("*", requestId());
 app.use(async (c, next) => {
   const metadata = c.get("context").requestMetadata;
 
-  const honoLogger = mainLogger.child({
+  const honoLogger = createLogger("hono", {
     requestId: c.var.requestId,
     ipAddress: metadata.ipAddress,
     userAgent: metadata.userAgent,

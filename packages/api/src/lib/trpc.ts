@@ -15,7 +15,7 @@ import { z, ZodError } from "zod/v4";
 
 import { HonoEnv } from "@repo/shared";
 import { ApiRequestMetadata } from "@repo/shared/universal";
-import { logger } from "@repo/shared/utils";
+import { createLogger } from "@repo/shared/utils";
 
 import { TRPCContext } from "./context";
 
@@ -80,11 +80,12 @@ export const createTRPCContext = async ({
     auth: null,
   };
 
-  const trpcLogger = logger.child({
+  const trpcLogger = createLogger("trpc", {
     ipAddress: requestMetadata.ipAddress,
     userAgent: requestMetadata.userAgent,
     requestId: crypto.randomUUID(),
   });
+
   const cache = new Map<string | symbol, unknown>();
   return {
     logger: trpcLogger,
