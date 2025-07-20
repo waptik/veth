@@ -46,6 +46,7 @@ export const TRPCReactProvider: React.FC<{ children: React.ReactNode }> = ({
         loggerLink({
           enabled: (op) =>
             __DEV__ || (op.direction === "down" && op.result instanceof Error),
+          colorMode: "ansi",
         }),
         httpBatchLink({
           url: `${getBaseUrl()}/trpc`,
